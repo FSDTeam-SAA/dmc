@@ -43,15 +43,25 @@ export const createItem = async (req, res) => {
 /**
  * Get all items
  */
-export const getAllItems= async (req, res) => {
+export const getAllItems = async (req, res) => {
   try {
-    const items = await Item.find();
+    // Get type from query string
+    const { type } = req.query;
+
+    // Build filter object
+    const filter  =  {};
+    if (type) filter.type = type;
+
+    // Fetch items matching the filter
+    const items = await Item.find(filter);
+
     return generateResponse(res, 200, true, "Items fetched successfully", items);
   } catch (error) {
     console.error(error);
     return generateResponse(res, 500, false, "Failed to fetch items");
   }
 };
+
 
 /**
  * Get item by ID
