@@ -1,6 +1,43 @@
-import mongoose from "mongoose";
-import { Announcement } from "./model.js";
-import { Dealer } from "../model.js";
+import mongoose from 'mongoose';
+import { Announcement } from './model.js';
+import { Dealer } from '../model.js';
+
+// ✅ VERIFY DEALER ID
+export const verifyDealerId = async (req, res, next) => {
+  try {
+    const { dealerId } = req.body;
+
+    if (!dealerId) {
+      return res.status(400).json({
+        success: false,
+        message: 'dealerId is required'
+      });
+    }
+
+    const dealer = await Dealer.findOne({ dealerId });
+
+    if (!dealer) {
+      return res.status(404).json({
+        success: false,
+        message: 'Dealer not found',
+        exists: false
+      });
+    }
+
+    return res.status(200).json({
+      success: true,
+      message: 'Dealer verified successfully',
+      exists: true,
+      data: {
+        dealerId: dealer.dealerId,
+        dealerName: dealer.dealerName,
+        email: dealer.email
+      }
+    });
+  } catch (err) {
+    next(err);
+  }
+};
 
 // ✅ CREATE
 export const createAnnouncement = async (req, res, next) => {
@@ -16,7 +53,7 @@ export const createAnnouncement = async (req, res, next) => {
       series,
       floorPrice,
       announcement,
-      remarks,
+      remarks
     } = req.body;
 
     // Basic required validation
@@ -35,7 +72,7 @@ export const createAnnouncement = async (req, res, next) => {
       return res.status(400).json({
         success: false,
         message:
-          "dealerId, auction, vin, vehicleYear, mileage, interiorChoice, model, series, floorPrice, announcement are required",
+          'dealerId, auction, vin, vehicleYear, mileage, interiorChoice, model, series, floorPrice, announcement are required'
       });
     }
 
@@ -50,13 +87,13 @@ export const createAnnouncement = async (req, res, next) => {
       series,
       floorPrice,
       announcement,
-      remarks,
+      remarks
     });
 
     return res.status(201).json({
       success: true,
-      message: "Announcement created successfully",
-      data: doc,
+      message: 'Announcement created successfully',
+      data: doc
     });
   } catch (err) {
     next(err);
@@ -66,8 +103,11 @@ export const createAnnouncement = async (req, res, next) => {
 // ✅ GET ALL (pagination + filters)
 export const getAllAnnouncements = async (req, res, next) => {
   try {
-    const page = Math.max(parseInt(req.query.page || "1", 10), 1);
-    const limit = Math.min(Math.max(parseInt(req.query.limit || "10", 10), 1), 100);
+    const page = Math.max(parseInt(req.query.page || '1', 10), 1);
+    const limit = Math.min(
+      Math.max(parseInt(req.query.limit || '10', 10), 1),
+      100
+    );
     const skip = (page - 1) * limit;
 
     const filter = {};
@@ -78,23 +118,20 @@ export const getAllAnnouncements = async (req, res, next) => {
     if (req.query.vin) filter.vin = req.query.vin;
 
     const [data, total] = await Promise.all([
-      Announcement.find(filter)
-        .sort({ createdAt: -1 })
-        .skip(skip)
-        .limit(limit),
-      Announcement.countDocuments(filter),
+      Announcement.find(filter).sort({ createdAt: -1 }).skip(skip).limit(limit),
+      Announcement.countDocuments(filter)
     ]);
 
     return res.status(200).json({
       success: true,
-      message: "Announcements fetched successfully",
+      message: 'Announcements fetched successfully',
       data,
       meta: {
         page,
         limit,
         total,
-        totalPages: Math.ceil(total / limit) || 1,
-      },
+        totalPages: Math.ceil(total / limit) || 1
+      }
     });
   } catch (err) {
     next(err);
@@ -109,7 +146,7 @@ export const getAnnouncementById = async (req, res, next) => {
     if (!mongoose.Types.ObjectId.isValid(id)) {
       return res.status(400).json({
         success: false,
-        message: "Invalid announcement id",
+        message: 'Invalid announcement id'
       });
     }
 
@@ -118,36 +155,35 @@ export const getAnnouncementById = async (req, res, next) => {
     if (!doc) {
       return res.status(404).json({
         success: false,
-        message: "Announcement not found",
+        message: 'Announcement not found'
       });
     }
 
     return res.status(200).json({
       success: true,
-      message: "Announcement fetched successfully",
-      data: doc,
+      message: 'Announcement fetched successfully',
+      data: doc
     });
   } catch (err) {
     next(err);
   }
 };
 
-
 // ✅ DASHBOARD TOTALS: announcements + dealers
 export const getDashboardTotals = async (req, res, next) => {
   try {
     const [totalDealers, totalAnnouncements] = await Promise.all([
       Dealer.countDocuments(),
-      Announcement.countDocuments(),
+      Announcement.countDocuments()
     ]);
 
     return res.status(200).json({
       success: true,
-      message: "Dashboard totals fetched successfully",
+      message: 'Dashboard totals fetched successfully',
       data: {
         totalDealers,
-        totalAnnouncements,
-      },
+        totalAnnouncements
+      }
     });
   } catch (err) {
     next(err);
