@@ -169,6 +169,37 @@ export const getAnnouncementById = async (req, res, next) => {
   }
 };
 
+// ✅ DELETE
+export const deleteAnnouncement = async (req, res, next) => {
+  try {
+    const { id } = req.params;
+
+    if (!mongoose.Types.ObjectId.isValid(id)) {
+      return res.status(400).json({
+        success: false,
+        message: 'Invalid announcement id'
+      });
+    }
+
+    const doc = await Announcement.findByIdAndDelete(id);
+
+    if (!doc) {
+      return res.status(404).json({
+        success: false,
+        message: 'Announcement not found'
+      });
+    }
+
+    return res.status(200).json({
+      success: true,
+      message: 'Announcement deleted successfully',
+      data: doc
+    });
+  } catch (err) {
+    next(err);
+  }
+};
+
 // ✅ DASHBOARD TOTALS: announcements + dealers
 export const getDashboardTotals = async (req, res, next) => {
   try {

@@ -1,6 +1,7 @@
 import express from 'express';
 import {
   createAnnouncement,
+  deleteAnnouncement,
   getAllAnnouncements,
   getAnnouncementById,
   getDashboardTotals,
@@ -14,5 +15,6 @@ router.post('/', createAnnouncement);
 router.get('/', getAllAnnouncements);
 router.get('/totals', getDashboardTotals);
 router.get('/:id', getAnnouncementById);
+router.delete('/:id', deleteAnnouncement);
 
 export default router;
