@@ -1,26 +1,40 @@
-import { Resend } from 'resend';
-import { resendApiKey, emailFrom } from '../core/config/config.js';
-
-const resend = new Resend(resendApiKey);
+import nodemailer from 'nodemailer';
+import {
+  emailHost,
+  emailPort,
+  emailAddress,
+  emailPass,
+  emailFrom
+} from '../core/config/config.js';
 
 const sendEmail = async ({ to, subject, html }) => {
   try {
-    if (!resendApiKey) {
-      throw new Error('Missing RESEND_API_KEY in environment.');
+    if (!emailHost || !emailPort || !emailAddress || !emailPass || !emailFrom) {
+      throw new Error(
+        'Missing email configuration in environment (EMAIL_HOST, EMAIL_PORT, EMAIL_ADDRESS, EMAIL_PASS, EMAIL_FROM).'
+      );
     }
 
-    const result = await resend.emails.send({
+    // Create Nodemailer transporter
+    const transporter = nodemailer.createTransport({
+      host: emailHost,
+      port: parseInt(emailPort),
+      secure: parseInt(emailPort) === 465, // true for 465, false for other ports
+      auth: {
+        user: emailAddress,
+        pass: emailPass
+      }
+    });
+
+    // Send email
+    const result = await transporter.sendMail({
       from: emailFrom,
       to,
       subject,
       html
     });
 
-    if (result?.error) {
-      throw new Error(result.error.message || 'Resend email send failed');
-    }
-
-    return { success: true, id: result?.data?.id };
+    return { success: true, id: result?.messageId };
   } catch (error) {
     console.error('Email send error:', error);
     return { success: false, error: error.message };

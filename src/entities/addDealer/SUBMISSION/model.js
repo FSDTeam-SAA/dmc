@@ -21,8 +21,7 @@ const announcementSchema = new mongoose.Schema(
       trim: true,
       uppercase: true,
       index: true,
-      minlength: 11,
-      maxlength: 17,
+      
     },
     vehicleYear: {
       type: Number,

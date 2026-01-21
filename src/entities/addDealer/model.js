@@ -32,15 +32,18 @@ const dealerSchema = new mongoose.Schema(
       minlength: 6,
       maxlength: 20,
     },
-    vin: {
+    address: {
       type: String,
-      required: true,
+      
       trim: true,
       uppercase: true,
       unique: true,
       index: true,
-      minlength: 11,
-      maxlength: 17,
+      
+    },
+    age:{
+      type:String
+
     },
   },
   { timestamps: true } // createdAt, updatedAt

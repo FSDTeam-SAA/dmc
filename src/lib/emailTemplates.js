@@ -15,7 +15,6 @@ const verificationCodeTemplate = (code) => `
 
 export default verificationCodeTemplate;
 
-
 export const getPaymentSuccessTemplate = ({ name, eventId, slots }) => {
   const slotDetails = slots
     .map(
@@ -44,7 +43,6 @@ export const getPaymentSuccessTemplate = ({ name, eventId, slots }) => {
   `;
 };
 
-
 // auto refunded template
 
 export const getConflictAfterPaymentTemplate = ({
@@ -57,7 +55,7 @@ export const getConflictAfterPaymentTemplate = ({
   selectedSlots = [],
   sessionId,
   paymentIntentId,
-  refundAmount,
+  refundAmount
 }) => {
   const slotDetails = selectedSlots
     .map(
@@ -112,7 +110,13 @@ export const getConflictAfterPaymentTemplate = ({
   `;
 };
 
-export const getPaymentSuccessForAdminTemplate = ({ name, email, phone, eventId, slots }) => {
+export const getPaymentSuccessForAdminTemplate = ({
+  name,
+  email,
+  phone,
+  eventId,
+  slots
+}) => {
   const slotDetails = slots
     .map(
       (slot, index) =>
@@ -134,6 +138,115 @@ export const getPaymentSuccessForAdminTemplate = ({ name, email, phone, eventId,
       <br />
       <p>This booking has been paid and confirmed via Stripe.</p>
       <p>Please make necessary arrangements for the event.</p>
+    </div>
+  `;
+};
+
+// ✅ Announcement Submission - Email to Dealer/User
+export const getSubmissionConfirmationTemplate = ({
+  dealerName,
+  dealerId,
+  vin,
+  model,
+  series,
+  vehicleYear,
+  floorPrice,
+  auctionName
+}) => {
+  return `
+    <div style="font-family: Arial, sans-serif; max-width: 600px; margin: auto; border: 1px solid #ddd; padding: 20px; border-radius: 10px; background-color: #f9f9f9;">
+      <h1 style="color: #333; text-align: center;">✅ Announcement Submitted Successfully</h1>
+      
+      <p style="font-size: 16px; color: #555;">Dear <strong>${dealerName}</strong>,</p>
+      
+      <p style="font-size: 16px; color: #555;">Thank you for submitting your announcement. We have received your submission and it is now under review.</p>
+      
+      <p style="font-size: 16px; color: #555;"><strong>Submission Details:</strong></p>
+      <ul style="font-size: 15px; color: #555;">
+        <li><strong>Dealer ID:</strong> ${dealerId}</li>
+        <li><strong>Vehicle VIN:</strong> ${vin}</li>
+        <li><strong>Model:</strong> ${model}</li>
+        <li><strong>Series:</strong> ${series}</li>
+        <li><strong>Year:</strong> ${vehicleYear}</li>
+        <li><strong>Floor Price:</strong> $${floorPrice}</li>
+        <li><strong>Auction:</strong> ${auctionName}</li>
+      </ul>
+      
+      <p style="font-size: 16px; color: #555;">Our team will review your announcement and get back to you shortly.</p>
+      
+      <p style="font-size: 16px; color: #555;">If you have any questions, please don't hesitate to contact us.</p>
+      
+      <footer style="border-top: 1px solid #ddd; padding-top: 10px; margin-top: 20px; text-align: center; font-size: 12px; color: #aaa;">
+        All rights reserved.
+      </footer>
+    </div>
+  `;
+};
+
+// ✅ Announcement Submission - Email to Admin
+export const getSubmissionAdminNotificationTemplate = ({
+  dealerName,
+  dealerId,
+  dealerEmail,
+  dealerContact,
+  vin,
+  model,
+  series,
+  vehicleYear,
+  mileage,
+  floorPrice,
+  interiorChoice,
+  auctionName,
+  announcement,
+  remarks
+}) => {
+  return `
+    <div style="font-family: Arial, sans-serif; max-width: 800px; margin: auto; border: 1px solid #ddd; padding: 20px; border-radius: 10px; background-color: #f9f9f9;">
+      <h1 style="color: #333; text-align: center;">📨 New Announcement Submission</h1>
+      
+      <h2 style="color: #007BFF; border-bottom: 2px solid #007BFF; padding-bottom: 10px;">Dealer Information</h2>
+      <ul style="font-size: 15px; color: #555;">
+        <li><strong>Dealer Name:</strong> ${dealerName}</li>
+        <li><strong>Dealer ID:</strong> ${dealerId}</li>
+        <li><strong>Email:</strong> <a href="mailto:${dealerEmail}">${dealerEmail}</a></li>
+        <li><strong>Contact:</strong> ${dealerContact}</li>
+      </ul>
+      
+      <h2 style="color: #007BFF; border-bottom: 2px solid #007BFF; padding-bottom: 10px;">Vehicle Information</h2>
+      <ul style="font-size: 15px; color: #555;">
+        <li><strong>VIN:</strong> ${vin}</li>
+        <li><strong>Model:</strong> ${model}</li>
+        <li><strong>Series:</strong> ${series}</li>
+        <li><strong>Year:</strong> ${vehicleYear}</li>
+        <li><strong>Mileage:</strong> ${mileage} miles</li>
+        <li><strong>Interior Choice:</strong> ${interiorChoice}</li>
+      </ul>
+      
+      <h2 style="color: #007BFF; border-bottom: 2px solid #007BFF; padding-bottom: 10px;">Auction & Pricing</h2>
+      <ul style="font-size: 15px; color: #555;">
+        <li><strong>Auction:</strong> ${auctionName}</li>
+        <li><strong>Floor Price:</strong> $${floorPrice}</li>
+      </ul>
+      
+      <h2 style="color: #007BFF; border-bottom: 2px solid #007BFF; padding-bottom: 10px;">Announcement</h2>
+      <p style="font-size: 15px; color: #555; background-color: #f0f0f0; padding: 10px; border-radius: 5px;">${announcement}</p>
+      
+      ${
+        remarks
+          ? `
+        <h2 style="color: #007BFF; border-bottom: 2px solid #007BFF; padding-bottom: 10px;">Remarks</h2>
+        <p style="font-size: 15px; color: #555; background-color: #f0f0f0; padding: 10px; border-radius: 5px;">${remarks}</p>
+      `
+          : ''
+      }
+      
+      <p style="font-size: 16px; color: #d9534f; margin-top: 20px; padding: 10px; background-color: #f9d6d6; border-radius: 5px;">
+        <strong>Action Required:</strong> Please review this announcement and take appropriate action.
+      </p>
+      
+      <footer style="border-top: 1px solid #ddd; padding-top: 10px; margin-top: 20px; text-align: center; font-size: 12px; color: #aaa;">
+        &copy; 2026 DMC Auctions. All rights reserved.
+      </footer>
     </div>
   `;
 };

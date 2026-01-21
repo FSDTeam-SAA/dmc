@@ -1,6 +1,9 @@
 import mongoose from 'mongoose';
 import { Announcement } from './model.js';
 import { Dealer } from '../model.js';
+import sendEmail from '../../../lib/sendEmail.js';
+import { getSubmissionConfirmationTemplate, getSubmissionAdminNotificationTemplate } from '../../../lib/emailTemplates.js';
+import { adminMail } from '../../../core/config/config.js';
 
 // ✅ VERIFY DEALER ID
 export const verifyDealerId = async (req, res, next) => {
@@ -76,6 +79,15 @@ export const createAnnouncement = async (req, res, next) => {
       });
     }
 
+    // Verify dealer exists and get dealer info
+    const dealer = await Dealer.findOne({ dealerId });
+    if (!dealer) {
+      return res.status(404).json({
+        success: false,
+        message: 'Dealer not found'
+      });
+    }
+
     const doc = await Announcement.create({
       dealerId,
       auction,
@@ -90,9 +102,53 @@ export const createAnnouncement = async (req, res, next) => {
       remarks
     });
 
+    // 📧 Send confirmation email to dealer
+    const dealerEmailHtml = getSubmissionConfirmationTemplate({
+      dealerName: dealer.dealerName,
+      dealerId: dealer.dealerId,
+      vin,
+      model,
+      series,
+      vehicleYear,
+      floorPrice,
+      auctionName: auction
+    });
+
+    await sendEmail({
+      to: dealer.email,
+      subject: '✅ Your Announcement Submission Confirmed',
+      html: dealerEmailHtml
+    });
+
+    // 📧 Send notification email to admin
+    const adminEmailHtml = getSubmissionAdminNotificationTemplate({
+      dealerName: dealer.dealerName,
+      dealerId: dealer.dealerId,
+      dealerEmail: dealer.email,
+      dealerContact: dealer.contact,
+      vin,
+      model,
+      series,
+      vehicleYear,
+      mileage,
+      floorPrice,
+      interiorChoice,
+      auctionName: auction,
+      announcement,
+      remarks
+    });
+
+    if (adminMail) {
+      await sendEmail({
+        to: adminMail,
+        subject: `📨 New Announcement Submission from ${dealer.dealerName}`,
+        html: adminEmailHtml
+      });
+    }
+
     return res.status(201).json({
       success: true,
-      message: 'Announcement created successfully',
+      message: 'Announcement created successfully and emails sent',
       data: doc
     });
   } catch (err) {
