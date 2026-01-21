@@ -23,6 +23,8 @@ const announcementSchema = new mongoose.Schema(
       index: true,
       
     },
+    auctionLight:{type:String},
+exteriorChoice:{type:String},
     vehicleYear: {
       type: Number,
       required: true,

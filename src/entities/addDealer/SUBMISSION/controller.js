@@ -56,11 +56,15 @@ export const createAnnouncement = async (req, res, next) => {
       series,
       floorPrice,
       announcement,
-      remarks
+      remarks,
+      auctionLight,
+    exteriorChoice
     } = req.body;
 
     // Basic required validation
     if (
+      !auctionLight ||
+      !exteriorChoice ||
       !dealerId ||
       !auction ||
       !vin ||
@@ -99,7 +103,9 @@ export const createAnnouncement = async (req, res, next) => {
       series,
       floorPrice,
       announcement,
-      remarks
+      remarks,
+        auctionLight,
+    exteriorChoice
     });
 
     // 📧 Send confirmation email to dealer
