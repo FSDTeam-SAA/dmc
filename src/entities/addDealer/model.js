@@ -13,8 +13,7 @@ const dealerSchema = new mongoose.Schema(
       type: String,
       required: true,
       trim: true,
-      minlength: 2,
-      maxlength: 120,
+     
     },
     email: {
       type: String,
@@ -27,18 +26,17 @@ const dealerSchema = new mongoose.Schema(
     },
     contact: {
       type: String,
-      required: true,
+      
       trim: true,
-      minlength: 6,
-      maxlength: 20,
+      
     },
     address: {
       type: String,
       
       trim: true,
       uppercase: true,
-      unique: true,
-      index: true,
+    
+     
       
     },
     age:{

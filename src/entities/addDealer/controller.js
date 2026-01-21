@@ -18,16 +18,16 @@ const handleDuplicate = (err, res) => {
 // ✅ CREATE
 export const createDealer = async (req, res, next) => {
   try {
-    const { dealerId, dealerName, email, contact, vin } = req.body;
+    const { dealerId, dealerName, email, contact,address,age } = req.body;
 
-    if (!dealerId || !dealerName || !email || !contact || !vin) {
+    if (!dealerId || !dealerName || !email || !contact) {
       return res.status(400).json({
         success: false,
         message: "dealerId, dealerName, email, contact, vin are required",
       });
     }
 
-    const dealer = await Dealer.create({ dealerId, dealerName, email, contact, vin });
+    const dealer = await Dealer.create({ dealerId, dealerName, email ,contact,address,age});
 
     return res.status(201).json({
       success: true,
