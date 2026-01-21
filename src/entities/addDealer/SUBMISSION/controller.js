@@ -62,27 +62,7 @@ export const createAnnouncement = async (req, res, next) => {
     } = req.body;
 
     // Basic required validation
-    if (
-      !auctionLight ||
-      !exteriorChoice ||
-      !dealerId ||
-      !auction ||
-      !vin ||
-      !vehicleYear ||
-      mileage === undefined ||
-      !interiorChoice ||
-      !model ||
-      !series ||
-      floorPrice === undefined ||
-      !announcement
-    ) {
-      return res.status(400).json({
-        success: false,
-        message:
-          'dealerId,exteriorChoice,auctionLight ,auction, vin, vehicleYear, mileage, interiorChoice, model, series, floorPrice, announcement are required'
-      });
-    }
-
+   
     // Verify dealer exists and get dealer info
     const dealer = await Dealer.findOne({ dealerId });
     if (!dealer) {
@@ -104,8 +84,8 @@ export const createAnnouncement = async (req, res, next) => {
       floorPrice,
       announcement,
       remarks,
-        auctionLight,
-    exteriorChoice
+      auctionLight,
+       exteriorChoice
     });
 
     // 📧 Send confirmation email to dealer
