@@ -48,7 +48,7 @@ const announcementSchema = new mongoose.Schema(
     },
     series: {
       type: String,
-      required: true,
+      
       trim: true,
     },
 
