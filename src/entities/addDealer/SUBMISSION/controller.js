@@ -79,7 +79,7 @@ export const createAnnouncement = async (req, res, next) => {
       return res.status(400).json({
         success: false,
         message:
-          'dealerId, auction, vin, vehicleYear, mileage, interiorChoice, model, series, floorPrice, announcement are required'
+          'dealerId,exteriorChoice,auctionLight ,auction, vin, vehicleYear, mileage, interiorChoice, model, series, floorPrice, announcement are required'
       });
     }
 
