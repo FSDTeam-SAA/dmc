@@ -24,15 +24,32 @@ const __dirname = path.dirname(__filename);
 
 const app = express();
 
-// Set up security middleware
-app.use(helmet());
-app.use(
-    cors({
-      origin: true,
-      credentials: true,
-      methods: ["GET", "POST", "PUT", "DELETE", "OPTIONS"],
-    })
-  );
+const allowedOrigins = [
+  "https://fleetcoreremarketing.com",
+  "https://admin.fleetcoreremarketing.com",
+  "https://api.fleetcoreremarketing.com",
+  "http://localhost:3000", // optional (dev)
+];
+
+const corsOptions = {
+  origin: (origin, cb) => {
+    // allow tools like Postman/curl (no Origin header)
+    if (!origin) return cb(null, true);
+
+    if (allowedOrigins.includes(origin)) return cb(null, true);
+
+    return cb(new Error(`CORS blocked for origin: ${origin}`));
+  },
+  credentials: true,
+  methods: ["GET", "POST", "PUT", "DELETE", "OPTIONS"],
+  allowedHeaders: ["Content-Type", "Authorization"],
+};
+
+app.use(cors(corsOptions));
+app.options("*", cors(corsOptions)); // ✅ use SAME options
+
+// handle preflight
+app.options("*", cors());
 app.use(xssClean());
 app.use(mongoSanitize());
 
